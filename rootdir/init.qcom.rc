@@ -166,6 +166,9 @@ on boot
     chown system system /sys/class/leds/red/device/grpfreq
     chown system system /sys/class/leds/red/device/grppwm
     chown system system /sys/class/leds/red/device/blink
+    chown system system /sys/class/leds/red/led_time
+    chown system system /sys/class/leds/green/led_time
+    chown system system /sys/class/leds/blue/led_time
 
     # IR Blaster
     chown system system /sys/class/leds/infrared/transmit
@@ -186,24 +189,21 @@ on boot
     chown system system /sys/devices/soc/soc:fpc1020/wakeup_enable
     chmod 0660 /sys/devices/soc/soc:fpc1020/wakeup_enable
     chown system system /sys/devices/soc/soc:fpc1020/wakeup_enable
-    chmod 0660 /sys/devices/soc/soc:fpc1020/wakeup_enable 
+    chmod 0660 /sys/devices/soc/soc:fpc1020/wakeup_enable
 
     setprop persist.sys.fp.vendor none
     start gx_fpd
-
-    # jacoghi, Double Tap to Wake nodes for EBBG LCD
-
-  on property:markw.dt2w=1
-    write /sys/devices/soc/78b7000.i2c/i2c-3/3-004a/wakeup_mode 1
-
-  on property:markw.dt2w=0
-    write /sys/devices/soc/78b7000.i2c/i2c-3/3-004a/wakeup_mode 0
 
     # Allow access to emmc rawdump block partition and dload sysfs node
     chown root system /dev/block/bootdevice/by-name/rawdump -p /dev/block/
     chmod 0660 /dev/block/bootdevice/by-name/rawdump -p /dev/block/
     chown root system /sys/kernel/dload/emmc_dload
     chmod 0660 /sys/kernel/dload/emmc_dload
+
+    # Enable sensitive mode for cmhw on EBBG screens.
+    # Tianma seems not to have sensitive mode, so it is device-specific for now
+    chmod 0660 /sys/devices/soc/78b7000.i2c/i2c-3/3-004a/sensitive_mode
+    chown system system /sys/devices/soc/78b7000.i2c/i2c-3/3-004a/sensitive_mode
 
 # MSM specific files that need to be created on /data
 on post-fs-data
@@ -329,7 +329,7 @@ on post-fs-data
     mkdir /data/misc/SelfHost/Running/ 2750 system shell
     mkdir /data/misc/SelfHost/socket/ 2770 system system
 
-    #Create PERFD deamon related dirs
+    # Create PERFD deamon related dirs
     mkdir /data/system/perfd 0770 root system
     chmod 2770 /data/system/perfd
     rm /data/system/perfd/default_values
@@ -387,6 +387,13 @@ service iop /system/bin/iop
     disabled
     socket iop seqpacket 0666 root system
     oneshot
+
+service ptt_socket_app /system/bin/ptt_socket_app
+    class main
+    user system
+    group system
+    oneshot
+
 
 #bug156417 zhaoqf_sh add Allow usb charging to be disabled peristently
 on property:persist.sys.chgdisabled=1
@@ -656,7 +663,7 @@ on property:persist.sys.fp.vendor=switchf
 on property:persist.sys.fp.vendor=goodix
     setprop persist.sys.fp.goodix 1
     setprop ro.boot.fpsensor gdx
-    setprop ro.hardware.fingerprint goodix  
+    setprop ro.hardware.fingerprint goodix
 
 on property:persist.sys.fp.onstart=1
    start fingerprintd
@@ -667,3 +674,41 @@ on property:vold.decrypt=trigger_restart_min_framework
 
 on property:vold.decrypt=trigger_restart_framework
     restart time_daemon
+
+on property:hw.display.on=true
+  write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 652800
+  write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 652800
+  write /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 652800
+  write /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq 652800
+  write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 652800
+  write /sys/devices/system/cpu/cpu5/cpufreq/scaling_min_freq 652800
+  write /sys/devices/system/cpu/cpu6/cpufreq/scaling_min_freq 652800
+  write /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq 652800
+
+  write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 2016000
+  write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 2016000
+  write /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 2016000
+  write /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq 2016000
+  write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2016000
+  write /sys/devices/system/cpu/cpu5/cpufreq/scaling_max_freq 2016000
+  write /sys/devices/system/cpu/cpu6/cpufreq/scaling_max_freq 2016000
+  write /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq 2016000
+
+on property:hw.display.on=false
+  write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 400457
+  write /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 400457
+  write /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 400457
+  write /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq 400457
+  write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 400457
+  write /sys/devices/system/cpu/cpu5/cpufreq/scaling_min_freq 400457
+  write /sys/devices/system/cpu/cpu6/cpufreq/scaling_min_freq 400457
+  write /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq 400457
+
+  write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 652800
+  write /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 652800
+  write /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 652800
+  write /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq 652800
+  write /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 652800
+  write /sys/devices/system/cpu/cpu5/cpufreq/scaling_max_freq 652800
+  write /sys/devices/system/cpu/cpu6/cpufreq/scaling_max_freq 652800
+  write /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq 652800

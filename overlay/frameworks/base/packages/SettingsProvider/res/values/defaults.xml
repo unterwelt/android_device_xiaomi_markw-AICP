@@ -17,9 +17,7 @@
  */
 -->
 <resources>
-    
-    <bool name="def_airplane_mode_on">true</bool>
-    
+
     <!-- Set the automatic brightness mode on by default -->
     <bool name="def_screen_brightness_automatic_mode">true</bool>
 
