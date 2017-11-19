@@ -1,5 +1,3 @@
-Copyright 2017 - The Mokee Opensource Project
-
 Device configuration for Xiaomi Redmi 4 (_markw_)
 =====================================================
 
