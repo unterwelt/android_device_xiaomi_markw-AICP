@@ -53,7 +53,7 @@ TARGET_NO_BOOTLOADER := true
 
 # Kernel
 BOARD_KERNEL_BASE := 0x80000000
-BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom msm_rtb.filter=0x237 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 androidboot.bootdevice=7824900.sdhci earlycon=msm_hsl_uart,0x78af000
+BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom msm_rtb.filter=0x237 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 androidboot.bootdevice=7824900.sdhci earlycon=msm_hsl_uart,0x78af000 no_console_suspend=1
 BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 BOARD_KERNEL_PAGESIZE := 2048
 BOARD_KERNEL_TAGS_OFFSET := 0x00000100
@@ -95,7 +95,7 @@ AUDIO_FEATURE_ENABLED_PROXY_DEVICE := true
 AUDIO_FEATURE_ENABLED_SPKR_PROTECTION := true
 AUDIO_FEATURE_ENABLED_SOURCE_TRACKING := true
 AUDIO_FEATURE_ENABLED_SSR := true
-AUDIO_FEATURE_ENABLED_VBAT_MONITOR := false
+AUDIO_FEATURE_ENABLED_VBAT_MONITOR := true
 #AUDIO_FEATURE_ENABLED_VOICE_CONCURRENCY := true
 AUDIO_FEATURE_ENABLED_VORBIS_OFFLOAD := true
 AUDIO_FEATURE_ENABLED_WMA_OFFLOAD  := true
@@ -108,10 +108,6 @@ BOARD_USES_ALSA_AUDIO := true
 USE_CUSTOM_AUDIO_POLICY := 1
 USE_XML_AUDIO_POLICY_CONF := 1
 
-# FM
-BOARD_HAVE_QCOM_FM := true
-TARGET_QCOM_NO_FM_FIRMWARE := true
-
 # Bluetooth
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := $(LOCAL_PATH)/bluetooth
 BOARD_HAVE_BLUETOOTH := true
@@ -120,9 +116,6 @@ BOARD_HAVE_BLUETOOTH_QCOM := true
 QCOM_BT_READ_ADDR_FROM_PROP := true
 
 # Camera
-# Force camera module to be compiled only in 32-bit mode on 64-bit systems
-# Once camera module can run in the native mode of the system (either
-# 32-bit or 64-bit), the following line should be deleted
 BOARD_QTI_CAMERA_32BIT_ONLY := true
 TARGET_TS_MAKEUP := true
 TARGET_HAS_LEGACY_CAMERA_HAL1 := true
@@ -232,7 +225,7 @@ USE_SENSOR_MULTI_HAL := true
 TARGET_TAP_TO_WAKE_NODE := "/proc/gesture/onoff"
 
 # SELinux
-include device/qcom/sepolicy/sepolicy.mk
+-include device/qcom/sepolicy/sepolicy.mk
 BOARD_SEPOLICY_DIRS += $(LOCAL_PATH)/sepolicy
 
 # Wi-Fi
