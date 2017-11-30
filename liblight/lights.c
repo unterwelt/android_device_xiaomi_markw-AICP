@@ -177,7 +177,7 @@ match_color_grid_value(int value)
     const int grid[] = {16, 32, 64, 128, 256}; // we can add 2 more values, but these are enough
     const float diff_rate_great = 0.5f; // round down (64 + 64*0.5 =round_to=> 64) 
     const float diff_rate_less = 0.25f; // round up (64 - 64*0.25 + 1 =round_to=> 64)
-    const int   zero_like = 12;
+    const int   zero_like = 12; // 16 - 16 * 0.25
 
     if (zero_like >= value) return 0;
 
@@ -194,61 +194,65 @@ match_color_grid_value(int value)
 }
 
 static int
-min_not_zero(int a, int b)
+min_not_zero(int* values, int size)
 {
-    if (a == 0) return b;
-    if (b == 0) return a;
-    return (a < b) ? a : b;
+    int min = values[0]; // can be 0, careful
+
+    for (int i = 0; i != size; i++) {
+    	if (values[i] <= 0) continue;
+    	if (min <= 0) min = values[i]; // first not null
+        if (values[i] < min) 
+            min = values[i];
+    }
+
+    return min;
 }
 
 static void
 adapt_colors_for_blink(int* red, int* green, int* blue)
 {
-    int r = (*red);
-    int g = (*green);
-    int b = (*blue);
-    int max, min;
-    int r_i, g_i, b_i, min_i;
-    int r_rate, g_rate, b_rate;
+    int part[]  = {(*red), (*green), (*blue)}; // color components
+    int round[] = {     0,        0,       0}; // rounded to grid
+    int rate[]  = {     0,        0,       0}; // minimum component * rate = true component value 
+    const int size = sizeof(part)/sizeof(int); // 3
+    int max, min, min_round;
     float max_rate, revert_rate;
 
-    if (r) r++; // 255 => 256, to make clean divisions,
-    if (g) g++; // exclude 0
-    if (b) b++;
+    // find max element
+    max = part[0];
+    for (int i = 0; i != size; i++) 
+        if (max < part[i]) max = part[i];
 
-    max = (r > g) ? ((r > b) ? r : b) : ((g > b) ? g : b);
-    if (max == 0) return;
+    if (max == 0) return; // 0 0 0
 
     max_rate    =       256.f / (float) max; // max * max_rate = 256
     revert_rate = (float) max / 256.f;       //(max * max_rate) * revert_rate = max
-    
-    r = (int) ((float)r * max_rate); // max number will be 256,
-    g = (int) ((float)g * max_rate); // other numbers will increase proportionally
-    b = (int) ((float)b * max_rate); //
 
-    r_i = match_color_grid_value(r);
-    g_i = match_color_grid_value(g);
-    b_i = match_color_grid_value(b);
+    for (int i = 0; i != size; i++) {
+        part[i] = (int)((float)part[i] * max_rate); // max number will be 256,
+                                                    // increase elements proportionally
+        round[i] = match_color_grid_value(part[i]); // round off values to the grid
 
-    r = r_i * revert_rate;
-    g = g_i * revert_rate;
-    b = b_i * revert_rate;
+        part[i] = round[i] * revert_rate; // return the original scale of values
+    }
 
-    min   = min_not_zero(r,   min_not_zero(g,   b));
-    min_i = min_not_zero(r_i, min_not_zero(g_i, b_i));
+    min       = min_not_zero(part,  size);
+    min_round = min_not_zero(round, size);
 
-    r_rate = r_i / min_i;
-    g_rate = g_i / min_i;
-    b_rate = b_i / min_i;
+    if (min_round > 0) {
 
-    r = min * r_rate;
-    g = min * g_rate;
-    b = min * b_rate;
+        for (int i = 0; i != size; i++) {
+            rate[i] = round[i] / min_round; // calculate rates of components
+
+            part[i] = min * rate[i];        // min * rate = true component value 
+        }
+
+    }
 
     // result output
-    *red = r;
-    *green = g;
-    *blue = b;
+    *red   = part[0];
+    *green = part[1];
+    *blue  = part[2];
 }
 
 static int
@@ -304,7 +308,7 @@ set_speaker_light_locked(struct light_device_t* dev,
     green = (colorRGB >> 8) & 0xFF;
     blue = colorRGB & 0xFF;
 
-    float a_rate = alpha / 255.f; // notice: may be it is better to calc after 'adapt_colors_for_blink'
+    float a_rate = alpha / 256.f;
 
     red = (int)(red * a_rate);
     green = (int)(green * a_rate);
@@ -317,6 +321,7 @@ set_speaker_light_locked(struct light_device_t* dev,
         adapt_colors_for_blink(&red, &green, &blue); 
         
         // In our case, use the settings in the driver led range values
+        // to do: refactor intervals
         if (onMS < 1000)
             onMS = 1000;
         else if (onMS > 5000)
@@ -327,8 +332,10 @@ set_speaker_light_locked(struct light_device_t* dev,
         else if (offMS > 7000)
             offMS = 7000;
         
-        // Indexes [1: 0.13, 2:0.26, 3:0.52, 4:1.04, 5: 2.08, 6: 4.16, 7: 8.32, 8: 16.64]
-
+        // Indexes [0: 0.13, 1:0.26, 2: 0.52, 3:1.04, 4: 2.08, 5: 4.16, 6: 8.32, 7: 16.64]
+        // max fade grid     256     128      64      32       16       8        4   
+        // to do: match max fade element to grid
+        
         max = (red > green) ? ((red > blue) ? red : blue) : ((green > blue) ? green : blue);
         red_fade   = get_fade_index(max, red,   1); // rise and fall = 0.26
         green_fade = get_fade_index(max, green, 1);

@@ -204,6 +204,18 @@ on boot
     # Tianma seems not to have sensitive mode, so it is device-specific for now
     chmod 0660 /sys/devices/soc/78b7000.i2c/i2c-3/3-004a/sensitive_mode
     chown system system /sys/devices/soc/78b7000.i2c/i2c-3/3-004a/sensitive_mode
+    
+    # Subsystem Restart
+    # a506_zap
+    write /sys/bus/msm_subsys/devices/subsys0/restart_level "related"
+    # Venus
+    write /sys/bus/msm_subsys/devices/subsys1/restart_level "related"
+    # ADSP
+    write /sys/bus/msm_subsys/devices/subsys2/restart_level "related"
+    # WCNSS
+    write /sys/bus/msm_subsys/devices/subsys3/restart_level "related"
+    # Modem
+    write /sys/bus/msm_subsys/devices/subsys4/restart_level "related"
 
 # MSM specific files that need to be created on /data
 on post-fs-data
