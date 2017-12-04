@@ -168,10 +168,12 @@ match_color_grid_value(int value)
 static int
 min_not_zero(int* values, int size)
 {
-    int min = 0;
+    int min = values[0]; // can be 0, careful
 
-    for (int i = 0; i != size; i++)
-        if (0 < values[i] && values[i] < min) 
+    for (int i = 0; i != size; i++) {
+    	if (values[i] <= 0) continue;
+    	if (min <= 0) min = values[i]; // first not null
+        if (values[i] < min) 
             min = values[i];
 
     return min;
