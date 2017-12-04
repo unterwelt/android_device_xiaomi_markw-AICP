@@ -223,7 +223,7 @@ case "$target" in
                     done
                     for cpu_mbps_zones in /sys/class/devfreq/soc:qcom,cpubw/bw_hwmon/mbps_zones
                     do
-                        echo "1611 3221 5859 6445 7104" > $cpu_mbps_zones
+                        echo "1611 3221 5126 5859 6445 7104" > $cpu_mbps_zones
                     done
                     for cpu_sample_ms in /sys/class/devfreq/soc:qcom,cpubw/bw_hwmon/sample_ms
                     do
@@ -244,28 +244,28 @@ case "$target" in
                     echo 40 > $gpu_bimc_io_percent
                 done
 
-		# Configure DCC module to capture critical register contents when device crashes
-		for DCC_PATH in /sys/bus/platform/devices/*.dcc*
-		do
-			echo  0 > $DCC_PATH/enable
-			echo cap >  $DCC_PATH/func_type
-			echo sram > $DCC_PATH/data_sink
-			echo  1 > $DCC_PATH/config_reset
+            		# Configure DCC module to capture critical register contents when device crashes
+            		for DCC_PATH in /sys/bus/platform/devices/*.dcc*
+            		do
+            			echo  0 > $DCC_PATH/enable
+            			echo cap >  $DCC_PATH/func_type
+            			echo sram > $DCC_PATH/data_sink
+            			echo  1 > $DCC_PATH/config_reset
 
-			# Register specifies APC CPR closed-loop settled voltage for current voltage corner
-			echo 0xb1d2c18 1 > $DCC_PATH/config
+            			# Register specifies APC CPR closed-loop settled voltage for current voltage corner
+            			echo 0xb1d2c18 1 > $DCC_PATH/config
 
-			# Register specifies SW programmed open-loop voltage for current voltage corner
-			echo 0xb1d2900 1 > $DCC_PATH/config
+            			# Register specifies SW programmed open-loop voltage for current voltage corner
+            			echo 0xb1d2900 1 > $DCC_PATH/config
 
-			# Register specifies APM switch settings and APM FSM state
-			echo 0xb1112b0 1 > $DCC_PATH/config
+            			# Register specifies APM switch settings and APM FSM state
+            			echo 0xb1112b0 1 > $DCC_PATH/config
 
-			# Register specifies CPR mode change state and also #online cores input to CPR HW
-			echo 0xb018798 1 > $DCC_PATH/config
+            			# Register specifies CPR mode change state and also #online cores input to CPR HW
+            			echo 0xb018798 1 > $DCC_PATH/config
 
-			echo  1 > $DCC_PATH/enable
-		done
+            			echo  1 > $DCC_PATH/enable
+            		done
 
                 # disable thermal & BCL core_control to update interactive gov settings
                 echo 0 > /sys/module/msm_thermal/core_control/enabled
@@ -288,18 +288,31 @@ case "$target" in
                     echo -n enable > $mode
                 done
 
+                for freq in /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq
+                do
+                  echo 2208000 > $freq
+                done
+
+                for freq in /sys/devices/system/cpu/cpu*/cpufreq/scaling_min_freq
+                do
+                  echo 307000 > $freq
+                done
+
                 #governor settings
                 echo 1 > /sys/devices/system/cpu/cpu0/online
-                echo "interactive" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-                echo "19000 1401600:39000" > /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
-                echo 85 > /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load
-                echo 20000 > /sys/devices/system/cpu/cpufreq/interactive/timer_rate
-                echo 1401600 > /sys/devices/system/cpu/cpufreq/interactive/hispeed_freq
-                echo 0 > /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
-                echo "85 1401600:80" > /sys/devices/system/cpu/cpufreq/interactive/target_loads
-                echo 39000 > /sys/devices/system/cpu/cpufreq/interactive/min_sample_time
-                echo 40000 > /sys/devices/system/cpu/cpufreq/interactive/sampling_down_factor
-                echo 652800 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+                echo "impulse" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+                echo "19000 1401600:29000" > /sys/devices/system/cpu/cpufreq/impulse/above_hispeed_delay
+                echo 95 > /sys/devices/system/cpu/cpufreq/impulse/go_hispeed_load
+                echo 20000 > /sys/devices/system/cpu/cpufreq/impulse/timer_rate
+                echo 1401600 > /sys/devices/system/cpu/cpufreq/impulse/hispeed_freq
+                echo 0 > /sys/devices/system/cpu/cpufreq/impulse/io_is_busy
+                echo "85 1401600:80" > /sys/devices/system/cpu/cpufreq/impulse/target_loads
+                echo 29000 > /sys/devices/system/cpu/cpufreq/impulse/min_sample_time
+                echo 10 > /sys/devices/system/cpu/cpufreq/impulse/go_lowspeed_load
+
+
+                echo 1 > /sys/devices/system/cpu/cpufreq/impulse/use_sched_load
+                echo 1 > /sys/devices/system/cpu/cpufreq/impulse/use_migration_notif
 
                 # re-enable thermal & BCL core_control now
                 echo 1 > /sys/module/msm_thermal/core_control/enabled
@@ -353,8 +366,8 @@ esac
 # Post-setup services
 case "$target" in
     "msm8937" | "msm8953")
-        echo 256 > /sys/block/mmcblk0/bdi/read_ahead_kb
-        echo 256 > /sys/block/mmcblk0/queue/read_ahead_kb
+        echo 512 > /sys/block/mmcblk0/bdi/read_ahead_kb
+        echo 512 > /sys/block/mmcblk0/queue/read_ahead_kb
         setprop sys.post_boot.parsed 1
         start gamed
     ;;
@@ -388,3 +401,10 @@ case "$console_config" in
         echo "Enable console config to $console_config"
         ;;
 esac
+
+# Switch TCP congestion control to CDG
+echo cdg > /proc/sys/net/ipv4/tcp_congestion_control
+
+# Disable fingerprint boost - CPU is fast enough by itself.
+echo 0 > /sys/kernel/fp_boost/enabled
+
