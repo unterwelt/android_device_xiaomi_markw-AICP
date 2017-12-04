@@ -206,7 +206,13 @@ TARGET_PER_MGR_ENABLED := true
 # Power
 TARGET_POWERHAL_VARIANT := qcom
 
-# QCOM
+# Enable real time lockscreen charging current values
+BOARD_GLOBAL_CFLAGS += -DBATTERY_REAL_INFO
+
+# Properties
+TARGET_SYSTEM_PROP := $(LOCAL_PATH)/system.prop
+
+# Qualcomm
 BOARD_USES_QCOM_HARDWARE := true
 BOARD_USES_QC_TIME_SERVICES := true
 TARGET_USE_SDCLANG := true
