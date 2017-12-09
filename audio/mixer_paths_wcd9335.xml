@@ -50,12 +50,7 @@
     <ctl name="LINEOUT2 Volume" value="13" />
     <ctl name="LINEOUT3 Volume" value="13" />
     <ctl name="LINEOUT4 Volume" value="13" />
-    <ctl name="HPHL Volume" value="20" />
-    <ctl name="HPHR Volume" value="20" />
     <ctl name="RX0 Digital Volume" value="84" />
-    <ctl name="RX1 Digital Volume" value="84" />
-    <ctl name="RX2 Digital Volume" value="84" />
-    <ctl name="RX3 Digital Volume" value="84" />
     <ctl name="RX4 Digital Volume" value="84" />
     <ctl name="RX5 Digital Volume" value="84" />
     <ctl name="RX6 Digital Volume" value="84" />
@@ -440,7 +435,6 @@
     <ctl name="INTERNAL_BT_SCO_RX Audio Mixer MultiMedia1" value="0" />
     <ctl name="INTERNAL_BT_SCO_RX Audio Mixer MultiMedia4" value="0" />
     <ctl name="INTERNAL_BT_SCO_RX Audio Mixer MultiMedia5" value="0" />
-    <ctl name="INTERNAL_BT_SCO_RX Audio Mixer MultiMedia6" value="0" />
     <ctl name="MultiMedia1 Mixer INTERNAL_BT_SCO_TX" value="0" />
     <ctl name="MultiMedia5 Mixer INTERNAL_BT_SCO_TX" value="0" />
     <!-- IIR/voice anc -->
@@ -1370,7 +1364,6 @@
     <path name="hfp-sco">
         <ctl name="HFP_INT_UL_HL Switch" value="1" />
         <ctl name="SLIMBUS_0_RX Port Mixer INTERNAL_BT_SCO_TX" value="1" />
-        <ctl name="INTERNAL_BT_SCO_RX Audio Mixer MultiMedia6" value="1" />
         <ctl name="MultiMedia6 Mixer SLIM_0_TX" value="1" />
         <ctl name="SLIMBUS_DL_HL Switch" value="1" />
    </path>
@@ -1947,10 +1940,6 @@
         <ctl name="RX INT2_1 MIX1 INP0" value="RX1" />
         <ctl name="RX INT1 DEM MUX" value="CLSH_DSM_OUT" />
         <ctl name="RX INT2 DEM MUX" value="CLSH_DSM_OUT" />
-        <ctl name="HPHL Volume" value="20" />
-        <ctl name="HPHR Volume" value="20" />
-        <ctl name="RX1 Digital Volume" value="81" />
-        <ctl name="RX2 Digital Volume" value="81" />
         <ctl name="ANC Slot" value="0" />
         <ctl name="ANC0 FB MUX" value="ANC_IN_HPHL" />
         <ctl name="ANC1 FB MUX" value="ANC_IN_HPHR" />
@@ -2014,10 +2003,6 @@
         <ctl name="IIR0 INP0 Volume" value="54" />
         <ctl name="RX INT1 DEM MUX" value="CLSH_DSM_OUT" />
         <ctl name="RX INT2 DEM MUX" value="CLSH_DSM_OUT" />
-        <ctl name="HPHL Volume" value="20" />
-        <ctl name="HPHR Volume" value="20" />
-        <ctl name="RX1 Digital Volume" value="81" />
-        <ctl name="RX2 Digital Volume" value="81" />
         <ctl name="ANC Slot" value="0" />
         <ctl name="ANC0 FB MUX" value="ANC_IN_HPHL" />
         <ctl name="ANC1 FB MUX" value="ANC_IN_HPHR" />
@@ -2048,10 +2033,6 @@
         <ctl name="IIR0 INP0 Volume" value="62" />
         <ctl name="RX INT1 DEM MUX" value="CLSH_DSM_OUT" />
         <ctl name="RX INT2 DEM MUX" value="CLSH_DSM_OUT" />
-        <ctl name="HPHL Volume" value="14" />
-        <ctl name="HPHR Volume" value="14" />
-        <ctl name="RX1 Digital Volume" value="81" />
-        <ctl name="RX2 Digital Volume" value="81" />
         <ctl name="ANC Slot" value="1" />
         <ctl name="ANC0 FB MUX" value="ANC_IN_HPHL" />
         <ctl name="ANC1 FB MUX" value="ANC_IN_HPHR" />

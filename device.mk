@@ -20,7 +20,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 $(call inherit-product-if-exists, vendor/xiaomi/markw/markw-vendor.mk)
 
 # Put ru_RU first in the list, so make it default.
-PRODUCT_LOCALES := ru_RU
+PRODUCT_LOCALES := es_ES
 
 # Overlays
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
@@ -122,7 +122,8 @@ PRODUCT_COPY_FILES += \
 
 # Camera
 PRODUCT_PACKAGES += \
-    Snap
+    Snap \
+    SnapdragonCamera
 #    camera.msm8953 \
 #    libmm-qcamera \
 
@@ -251,7 +252,8 @@ PRODUCT_PACKAGES += \
 # Perf
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/etc/perf-profile0.conf:system/vendor/etc/perf-profile0.conf \
-    $(LOCAL_PATH)/configs/etc/perf-profile1.conf:system/vendor/etc/perf-profile1.conf
+    $(LOCAL_PATH)/configs/etc/perf-profile1.conf:system/vendor/etc/perf-profile1.conf \
+		$(LOCAL_PATH)/configs/etc/perf-profile2.conf:system/vendor/etc/perf-profile2.conf
 
 # Power
 PRODUCT_PACKAGES += \
@@ -295,7 +297,7 @@ PRODUCT_COPY_FILES += \
 
 # Thermal
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/thermal-engine-8953.conf:system/etc/thermal-engine-8953.conf
+    $(LOCAL_PATH)/configs/thermal-engine.conf:system/etc/thermal-engine.conf
 
 # WiFi
 PRODUCT_PACKAGES += \

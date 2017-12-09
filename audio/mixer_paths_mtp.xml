@@ -49,14 +49,9 @@
     <ctl name="Voip Evrc Min Max Rate Config" id="1" value="4" />
     <ctl name="Voip Dtx Mode" value="0" />
     <ctl name="TTY Mode" value="OFF" />
-    <ctl name="HPHL Volume" value="9" />
-    <ctl name="HPHR Volume" value="9" />
     <ctl name="RX HPH Mode" value="NORMAL" />
     <ctl name="COMP0 RX1" value="0" />
     <ctl name="COMP0 RX2" value="0" />
-    <ctl name="RX1 Digital Volume" value="84" />
-    <ctl name="RX2 Digital Volume" value="84" />
-    <ctl name="RX3 Digital Volume" value="84" />
     <ctl name="IIR1 INP1 Volume" value="84" />
     <ctl name="IIR1 INP2 Volume" value="84" />
     <ctl name="IIR1 INP3 Volume" value="84" />
@@ -70,9 +65,7 @@
     <ctl name="DEC1 MUX" value="ZERO" />
     <ctl name="ADC2 MUX" value="ZERO" />
     <ctl name="RDAC2 MUX" value="ZERO" />
-    <ctl name="RX2 MIX2 INP2" value="ZERO" />
     <ctl name="RX2 MIX2 INP1" value="ZERO" />
-    <ctl name="RX1 MIX2 INP2" value="ZERO" />
     <ctl name="RX1 MIX2 INP1" value="ZERO" />
     <ctl name="RX3 MIX1 INP2" value="ZERO" />
     <ctl name="RX3 MIX1 INP1" value="ZERO" />
@@ -83,11 +76,9 @@
     <ctl name="EAR_S" value="ZERO" />
     <ctl name="HPHL" value="ZERO" />
     <ctl name="HPHR" value="ZERO" />
-    <ctl name="Lineout_1 amp" value="DISABLE"/> 
+    <ctl name="Lineout_1 amp" value="DISABLE"/>
     <ctl name="SPK" value="ZERO" />
     <ctl name="WSA Spk Switch" value="ZERO" />
-    <ctl name="SpkrMono WSA_RDAC" value="ZERO" />
-    <ctl name="SpkrMono BOOST Switch" value="0" />
     <ctl name="EAR PA Gain" value="POS_6_DB" />
     <ctl name="EAR PA Gain" value="POS_1P5_DB" />
     <ctl name="EAR PA Boost" value="DISABLE" />
@@ -97,7 +88,6 @@
     <ctl name="PRI_MI2S_RX_VI_FB_MUX" value="ZERO" />
     <ctl name="DEC3 MUX" value="ZERO" />
     <ctl name="DEC4 MUX" value="ZERO" />
-    <ctl name="SpkrMono VISENSE Switch" value="0" />
 
     <ctl name="PRI_MI2S_RX Audio Mixer MultiMedia1" value="0" />
     <ctl name="INTERNAL_BT_SCO_RX Audio Mixer MultiMedia1" value="0" />
@@ -116,7 +106,6 @@
     <ctl name="MultiMedia1 Mixer INTERNAL_BT_SCO_TX" value="0" />
     <ctl name="PRI_MI2S_RX_Voice Mixer CSVoice" value="0" />
     <ctl name="Voice_Tx Mixer TERT_MI2S_TX_Voice" value="0" />
-    <ctl name="PRI_MI2S_RX Port Mixer INT_BT_SCO_TX" value="0" />
     <ctl name="QUIN_MI2S_RX Audio Mixer MultiMedia1" value="0" />
     <ctl name="QUIN_MI2S_RX Audio Mixer MultiMedia2" value="0" />
     <ctl name="QUIN_MI2S_RX Audio Mixer MultiMedia3" value="0" />
@@ -132,7 +121,6 @@
     <ctl name="Internal BTSCO SampleRate" value="BTSCO_RATE_8KHZ" />
     <ctl name="INTERNAL_BT_SCO_RX_Voice Mixer CSVoice" value="0" />
     <ctl name="Voice_Tx Mixer INTERNAL_BT_SCO_TX_Voice" value="0" />
-    <ctl name="INTERNAL_BT_SCO_RX Audio Mixer Multimedia6" value="0" />
     <ctl name="MultiMedia6 Mixer TERT_MI2S_TX" value="0" />
 
     <!-- Voice2 -->
@@ -194,7 +182,6 @@
     <!-- fm -->
     <ctl name="Internal FM RX Volume" value="0" />
     <ctl name="PRI_MI2S_RX Port Mixer INTERNAL_FM_TX" value="0" />
-    <ctl name="MI2S_DL_HL Switch" value="1" />
     <ctl name="MultiMedia1 Mixer INTERNAL_FM_TX" value="0" />
     <ctl name="MultiMedia2 Mixer INTERNAL_FM_TX" value="0" />
     <ctl name="INTERNAL_FM_RX Audio Mixer MultiMedia1" value="0" />
@@ -571,7 +558,6 @@
         <ctl name="MultiMedia1 Mixer INTERNAL_FM_TX" value="1" />
     </path>
     <path name="audio-record-compress">
-        <ctl name="MultiMedia8 Mixer TERT_MI2S_TX" value="1" />
     </path>
 
     <path name="audio-record-compress bt-sco">
@@ -739,7 +725,6 @@
 
     <path name="hfp-sco">
         <ctl name="PRI_MI2S_RX Port Mixer INTERNAL_BT_SCO_TX" value="1" />
-        <ctl name="INTERNAL_BT_SCO_RX Audio Mixer MultiMedia6" value="1" />
         <ctl name="MultiMedia6 Mixer TERT_MI2S_TX" value="1" />
         <ctl name="HFP_INT_UL_HL Switch" value="1" />
     </path>
@@ -1007,9 +992,7 @@
 
     <path name="wsa-speaker">
         <ctl name="RX3 MIX1 INP1" value="RX1" />
-        <ctl name="RX3 Digital Volume" value="84" />
         <ctl name="LINE_OUT" value="Switch" />
-        <ctl name="SpkrMono WSA_RDAC" value="Switch" />
    </path>
 
    <path name="spkr-rx-calib">
@@ -1028,7 +1011,6 @@
         <ctl name="DEC4 MUX" value="DMIC4" />
         <path name="wsa-speaker" />
         <ctl name="PRI_MI2S_RX_VI_FB_MUX" value="SENARY_TX" />
-        <ctl name="SpkrMono VISENSE Switch" value="1" />
     </path>
 
     <path name="voice-speaker-protected">
@@ -1043,7 +1025,6 @@
     <path name="handset">
         <ctl name="RX1 MIX1 INP1" value="RX1" />
         <ctl name="RDAC2 MUX" value="RX1" />
-        <ctl name="RX1 Digital Volume" value="84" />
         <ctl name="EAR PA Gain" value="POS_6_DB" />
         <ctl name="EAR_S" value="Switch" />
     </path>
@@ -1277,7 +1258,7 @@
     <path name="unprocessed-mic">
         <path name="unprocessed-handset-mic" />
     </path>
-    
+
     <path name="ADSP testfwk">
         <ctl name="MI2S_DL_HL Switch" value="1" />
     </path>

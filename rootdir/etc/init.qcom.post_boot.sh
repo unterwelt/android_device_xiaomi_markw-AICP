@@ -290,12 +290,12 @@ case "$target" in
 
                 for freq in /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq
                 do
-                  echo 2208000 > $freq
+                  echo 2016000 > $freq
                 done
 
                 for freq in /sys/devices/system/cpu/cpu*/cpufreq/scaling_min_freq
                 do
-                  echo 307000 > $freq
+                  echo 652800 > $freq
                 done
 
                 #governor settings
@@ -407,4 +407,3 @@ echo cdg > /proc/sys/net/ipv4/tcp_congestion_control
 
 # Disable fingerprint boost - CPU is fast enough by itself.
 echo 0 > /sys/kernel/fp_boost/enabled
-

@@ -194,6 +194,14 @@ on boot
     setprop persist.sys.fp.vendor none
     start gx_fpd
 
+ # jacoghi, Double Tap to Wake nodes for EBBG LCD
+
+  on property:markw.dt2w=1
+    write /sys/devices/soc/78b7000.i2c/i2c-3/3-004a/wakeup_mode 1
+
+  on property:markw.dt2w=0
+    write /sys/devices/soc/78b7000.i2c/i2c-3/3-004a/wakeup_mode 0
+
     # Allow access to emmc rawdump block partition and dload sysfs node
     chown root system /dev/block/bootdevice/by-name/rawdump -p /dev/block/
     chmod 0660 /dev/block/bootdevice/by-name/rawdump -p /dev/block/
@@ -204,6 +212,18 @@ on boot
     # Tianma seems not to have sensitive mode, so it is device-specific for now
     chmod 0660 /sys/devices/soc/78b7000.i2c/i2c-3/3-004a/sensitive_mode
     chown system system /sys/devices/soc/78b7000.i2c/i2c-3/3-004a/sensitive_mode
+    
+    # Subsystem Restart
+    # a506_zap
+    write /sys/bus/msm_subsys/devices/subsys0/restart_level "related"
+    # Venus
+    write /sys/bus/msm_subsys/devices/subsys1/restart_level "related"
+    # ADSP
+    write /sys/bus/msm_subsys/devices/subsys2/restart_level "related"
+    # WCNSS
+    write /sys/bus/msm_subsys/devices/subsys3/restart_level "related"
+    # Modem
+    write /sys/bus/msm_subsys/devices/subsys4/restart_level "related"
 
     # Subsystem Restart
     # a506_zap
@@ -692,4 +712,3 @@ on property:vold.decrypt=trigger_restart_min_framework
 
 on property:vold.decrypt=trigger_restart_framework
     restart time_daemon
-

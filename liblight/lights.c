@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2008 The Android Open Source Project
  * Copyright (C) 2014 The  Linux Foundation. All rights reserved.
+ * Copyright (C) 2015 The CyanogenMod Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +28,8 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <pthread.h>
+#include <math.h>
 
-#include <sys/ioctl.h>
 #include <sys/types.h>
 
 #include <hardware/lights.h>
@@ -39,10 +40,19 @@ static pthread_once_t g_init = PTHREAD_ONCE_INIT;
 static pthread_mutex_t g_lock = PTHREAD_MUTEX_INITIALIZER;
 static struct light_state_t g_notification;
 static struct light_state_t g_battery;
-static int g_attention = 0;
+static struct light_state_t g_attention;
 
 char const*const RED_LED_FILE
         = "/sys/class/leds/red/brightness";
+
+char const*const RED_BLINK_FILE
+	= "/sys/class/leds/red/blink";
+
+char const*const GREEN_BLINK_FILE
+	= "/sys/class/leds/green/blink";
+
+char const*const BLUE_BLINK_FILE
+	= "/sys/class/leds/blue/blink";
 
 char const*const GREEN_LED_FILE
         = "/sys/class/leds/green/brightness";
@@ -53,17 +63,14 @@ char const*const BLUE_LED_FILE
 char const*const LCD_FILE
         = "/sys/class/leds/lcd-backlight/brightness";
 
-char const*const BUTTON_FILE
-        = "/sys/class/leds/button-backlight/brightness";
+char const*const RED_BREATH_FILE
+        = "/sys/class/leds/red/led_time";
 
-char const*const RED_BLINK_FILE
-        = "/sys/class/leds/red/blink";
+char const*const GREEN_BREATH_FILE
+        = "/sys/class/leds/green/led_time";
 
-char const*const GREEN_BLINK_FILE
-        = "/sys/class/leds/green/blink";
-
-char const*const BLUE_BLINK_FILE
-        = "/sys/class/leds/blue/blink";
+char const*const BLUE_BREATH_FILE
+        = "/sys/class/leds/blue/led_time";
 
 /**
  * device methods
@@ -91,6 +98,27 @@ write_int(char const* path, int value)
     } else {
         if (already_warned == 0) {
             ALOGE("write_int failed to open %s\n", path);
+            already_warned = 1;
+        }
+        return -errno;
+    }
+}
+
+static int
+write_str(char const* path, char *value)
+{
+    int fd;
+    static int already_warned = 0;
+
+    fd = open(path, O_RDWR);
+    if (fd >= 0) {
+        char buffer[20];
+        ssize_t amt = write(fd, value, (size_t)strlen(value));
+        close(fd);
+        return amt == -1 ? -errno : 0;
+    } else {
+        if (already_warned == 0) {
+            ALOGE("write_str failed to open %s\n", path);
             already_warned = 1;
         }
         return -errno;
@@ -175,6 +203,7 @@ min_not_zero(int* values, int size)
     	if (min <= 0) min = values[i]; // first not null
         if (values[i] < min) 
             min = values[i];
+    }
 
     return min;
 }
@@ -228,15 +257,29 @@ adapt_colors_for_blink(int* red, int* green, int* blue)
 
 static int
 set_speaker_light_locked(struct light_device_t* dev,
-        struct light_state_t const* state)
+        struct light_state_t const* state, const char* light_id)
 {
-    int red, green, blue;
+    int alpha, red, green, blue;
+    int max;
+    int red_fade, green_fade, blue_fade;
     int blink;
     int onMS, offMS;
     unsigned int colorRGB;
+    char breath_pattern_red[16]   = { 0, };
+    char breath_pattern_green[16] = { 0, };
+    char breath_pattern_blue[16]  = { 0, };
+    struct color *nearest = NULL;
 
     if(!dev) {
         return -1;
+    }
+
+    write_int(RED_LED_FILE, 0);
+    write_int(GREEN_LED_FILE, 0);
+    write_int(BLUE_LED_FILE, 0);
+
+    if (state == NULL) {
+        return 0;
     }
 
     switch (state->flashMode) {
@@ -253,16 +296,35 @@ set_speaker_light_locked(struct light_device_t* dev,
 
     colorRGB = state->color;
 
-#if 0
     ALOGD("set_speaker_light_locked mode %d, colorRGB=%08X, onMS=%d, offMS=%d\n",
             state->flashMode, colorRGB, onMS, offMS);
-#endif
+
+    if (0 == strcmp(LIGHT_ID_BATTERY, light_id)) // disable alpha from led when battery is charging
+        alpha = 0xFF;
+    else
+        alpha = (colorRGB >> 24) & 0xFF;
+
+    if (0 == strcmp(LIGHT_ID_BATTERY, light_id)) // disable alpha from led when battery is charging
+        alpha = 0xFF;
+    else
+        alpha = (colorRGB >> 24) & 0xFF;
+
+    if (0 == strcmp(LIGHT_ID_BATTERY, light_id)) // disable alpha from led when battery is charging
+        alpha = 0xFF;
+    else
+        alpha = (colorRGB >> 24) & 0xFF;
 
     red = (colorRGB >> 16) & 0xFF;
     green = (colorRGB >> 8) & 0xFF;
     blue = colorRGB & 0xFF;
 
     float a_rate = alpha / 256.f;
+
+    red = (int)(red * a_rate);
+    green = (int)(green * a_rate);
+    blue = (int)(blue * a_rate);
+
+    blink = onMS > 0 && offMS > 0;
 
     if (blink) {
 
@@ -307,10 +369,23 @@ set_speaker_light_locked(struct light_device_t* dev,
         sprintf(breath_pattern_blue,  "%d %d %d %d", blue_fade,  (int)(onMS/1000), blue_fade,  (int)(offMS/1000));
 
     } else {
-        write_int(RED_LED_FILE, red);
-        write_int(GREEN_LED_FILE, green);
-        write_int(BLUE_LED_FILE, blue);
+        blink = 0;
+        sprintf(breath_pattern_red,   "2 3 2 4");
+        sprintf(breath_pattern_green, "2 3 2 4");
+        sprintf(breath_pattern_blue,  "2 3 2 4");
     }
+
+    // Do everything with the lights out, then turn up the brightness
+    write_str(RED_BREATH_FILE, breath_pattern_red);
+    write_int(RED_BLINK_FILE, (blink && red ? 1 : 0));
+    write_str(GREEN_BREATH_FILE, breath_pattern_green);
+    write_int(GREEN_BLINK_FILE, (blink && green ? 1 : 0));
+    write_str(BLUE_BREATH_FILE, breath_pattern_blue);
+    write_int(BLUE_BLINK_FILE, (blink && blue ? 1 : 0));
+
+    write_int(RED_LED_FILE, red);
+    write_int(GREEN_LED_FILE, green);
+    write_int(BLUE_LED_FILE, blue);
 
     return 0;
 }
@@ -318,10 +393,13 @@ set_speaker_light_locked(struct light_device_t* dev,
 static void
 handle_speaker_battery_locked(struct light_device_t* dev)
 {
-    if (is_lit(&g_battery)) {
-        set_speaker_light_locked(dev, &g_battery);
+    set_speaker_light_locked(dev, NULL, "");
+    if (is_lit(&g_attention)) {
+        set_speaker_light_locked(dev, &g_attention, LIGHT_ID_ATTENTION);
+    } else if (is_lit(&g_notification)) {
+        set_speaker_light_locked(dev, &g_notification, LIGHT_ID_NOTIFICATIONS);
     } else {
-        set_speaker_light_locked(dev, &g_notification);
+        set_speaker_light_locked(dev, &g_battery, LIGHT_ID_BATTERY);
     }
 }
 
@@ -352,28 +430,20 @@ set_light_attention(struct light_device_t* dev,
         struct light_state_t const* state)
 {
     pthread_mutex_lock(&g_lock);
+
+    g_attention = *state;
     if (state->flashMode == LIGHT_FLASH_HARDWARE) {
-        g_attention = state->flashOnMS;
+        if (g_attention.flashOnMS > 0 && g_attention.flashOffMS == 0) {
+            g_attention.flashMode = LIGHT_FLASH_NONE;
+        }
     } else if (state->flashMode == LIGHT_FLASH_NONE) {
-        g_attention = 0;
+        g_attention.color = 0;
     }
     handle_speaker_battery_locked(dev);
-    pthread_mutex_unlock(&g_lock);
-    return 0;
-}
 
-static int
-set_light_buttons(struct light_device_t* dev,
-        struct light_state_t const* state)
-{
-    int err = 0;
-    if(!dev) {
-        return -1;
-    }
-    pthread_mutex_lock(&g_lock);
-    err = write_int(BUTTON_FILE, state->color & 0xFF);
     pthread_mutex_unlock(&g_lock);
-    return err;
+
+    return 0;
 }
 
 /** Close the lights device */
@@ -406,8 +476,6 @@ static int open_lights(const struct hw_module_t* module, char const* name,
         set_light = set_light_battery;
     else if (0 == strcmp(LIGHT_ID_NOTIFICATIONS, name))
         set_light = set_light_notifications;
-    else if (0 == strcmp(LIGHT_ID_BUTTONS, name))
-        set_light = set_light_buttons;
     else if (0 == strcmp(LIGHT_ID_ATTENTION, name))
         set_light = set_light_attention;
     else
@@ -444,7 +512,8 @@ struct hw_module_t HAL_MODULE_INFO_SYM = {
     .version_major = 1,
     .version_minor = 0,
     .id = LIGHTS_HARDWARE_MODULE_ID,
-    .name = "lights Module",
-    .author = "Google, Inc.",
+    .name = "Lights Module",
+    .author = "The CyanogenMod Project",
     .methods = &lights_module_methods,
 };
+

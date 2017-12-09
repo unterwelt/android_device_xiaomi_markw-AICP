@@ -22,14 +22,14 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, device/xiaomi/markw/device.mk)
 
 # Inherit some common CM stuff.
-$(call inherit-product, vendor/cm/config/common_full_phone.mk)
+$(call inherit-product, vendor/aokp/configs/common_full_phone.mk)
 
 # RR Device Maintainers
 PRODUCT_BUILD_PROP_OVERRIDES += \
     DEVICE_MAINTAINERS="VaBe"
 
 # Device identifier. This must come after all inclusions.
-PRODUCT_NAME := lineage_markw
+PRODUCT_NAME := aokp_markw
 PRODUCT_DEVICE := markw
 PRODUCT_BRAND := Xiaomi
 PRODUCT_MODEL := Redmi 4 Prime
@@ -38,3 +38,7 @@ PRODUCT_MANUFACTURER := Xiaomi
 PRODUCT_GMS_CLIENTID_BASE := android-xiaomi
 
 TARGET_VENDOR := Xiaomi
+
+PRODUCT_BUILD_PROP_OVERRIDES += \
+    BUILD_FINGERPRINT="Xiaomi/markw/markw:6.0.1/MMB29M/V8.5.3.0.MBEMIED:user/release-keys" \
+    PRIVATE_BUILD_DESC="markw-user 6.0.1 MMB29M V8.5.3.0.MBEMIED release-keys"

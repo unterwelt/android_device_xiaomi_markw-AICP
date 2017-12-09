@@ -5,7 +5,6 @@ etc/surround_sound_3mic/surround_sound_rec_5.1.cfg
 etc/surround_sound_3mic/surround_sound_rec_AZ.cfg
 lib/hw/audio.primary.msm8953.so
 lib/soundfx/libdirac.so
-lib64/hw/audio.primary.msm8953.so
 lib/libDiracAPI_SHARED.so
 vendor/etc/diracmobile.config
 vendor/lib/libacdb-fts.so
@@ -36,6 +35,8 @@ vendor/lib64/libhwdaphal.so
 vendor/lib64/soundfx/libqcbassboost.so
 vendor/lib64/soundfx/libqcreverb.so
 vendor/lib64/soundfx/libqcvirt.so
+
+system/bin/ptt_socket_app
 
 # Audio ACDB
 etc/acdbdata/MTP/MTP_Bluetooth_cal.acdb
@@ -518,3 +519,9 @@ lib64/libfpservice.so
 
 # FM
 bin/fm_qsoc_patches
+
+# Thermal (7.11.23)
+vendor/bin/thermal-engine
+vendor/lib/libthermalclient.so
+vendor/lib64/libthermalclient.so
+vendor/lib64/libthermalioctl.so
