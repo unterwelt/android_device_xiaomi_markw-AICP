@@ -1,7 +1,6 @@
 [
  {
-   "repository": "android_packages_resources_devicesettings
-",
-   "target_path": "packages_resources_devicesettings"
+   "repository": "android_packages_resources_devicesettings",
+   "target_path": "packages/resources/devicesettings"
  }
 ]
