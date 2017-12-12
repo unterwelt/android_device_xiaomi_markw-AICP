@@ -32,35 +32,68 @@
 
          Must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLevels">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
         <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
         <item>9</item>
+        <item>10</item>
+        <item>12</item>
         <item>14</item>
-        <item>25</item>       <!-- twilight -->
+        <item>16</item>
+        <item>19</item>
+        <item>25</item>
+        <item>31</item>       <!-- twilight -->
+        <item>37</item>
         <item>50</item>       <!-- dim indoor -->
+        <item>75</item>
         <item>100</item>      <!-- home -->
+        <item>150</item>
         <item>200</item>
+        <item>250</item>
         <item>300</item>      <!-- office -->
+        <item>400</item>
         <item>500</item>      <!-- sunrise -->
         <item>750</item>
         <item>1000</item>     <!-- overcast -->
         <item>2000</item>
-        <item>4000</item>
-        <item>7000</item>    <!-- daylight -->
+        <item>5000</item>
+        <item>9000</item>    <!-- daylight -->
     </integer-array>
 
     <!-- Array of output values for LCD backlight corresponding to the LUX values
          in the config_autoBrightnessLevels array.  This array should have size one greater
          than the size of the config_autoBrightnessLevels array.
          This must be overridden in platform specific overlays -->
-    <integer-array name="config_autoBrightnessLcdBacklightValues">        
+    <integer-array name="config_autoBrightnessLcdBacklightValues">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
         <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
         <item>10</item>
+        <item>11</item>
         <item>12</item>
+        <item>15</item>
         <item>17</item>
+        <item>20</item>
+        <item>23</item>
+        <item>26</item>
         <item>29</item>
+        <item>32</item>
         <item>35</item>
+        <item>41</item>
         <item>47</item>
+        <item>61</item>
         <item>75</item>
+        <item>95</item>
         <item>114</item>
         <item>130</item>
         <item>152</item>
@@ -73,7 +106,7 @@
     <!-- Screen brightness used to dim the screen when the user activity
          timeout expires.  May be less than the minimum allowed brightness setting
          that can be set by the user. -->
-    <integer name="config_screenBrightnessDim">10</integer>
+    <integer name="config_screenBrightnessDim">15</integer>
 
     <!-- Default screen brightness setting.
          Must be in the range specified by minimum and maximum. -->
@@ -88,9 +121,9 @@
          when adapting to brighter or darker environments.  This parameter controls how quickly
          brightness changes occur in response to an observed change in light level that exceeds the
          hysteresis threshold. -->
-    <integer name="config_autoBrightnessBrighteningLightFastDebounce">500</integer>
-    <integer name="config_autoBrightnessBrighteningLightDebounce">2000</integer>
-    <integer name="config_autoBrightnessDarkeningLightDebounce">4000</integer>
+    <integer name="config_autoBrightnessBrighteningLightFastDebounce">1000</integer>
+    <integer name="config_autoBrightnessBrighteningLightDebounce">4000</integer>
+    <integer name="config_autoBrightnessDarkeningLightDebounce">8000</integer>
 
     <!-- Period of time in which to consider light samples in milliseconds. -->
     <integer name="config_autoBrightnessAmbientLightHorizon">5000</integer>
@@ -492,6 +525,7 @@
          For example, a device with Home, Back and Menu keys would set this
          config to 7. -->
     <integer name="config_deviceHardwareWakeKeys">64</integer>
+    <integer name="config_buttonBrightnessSettingDefault">0</integer>
 
     <!-- Control the behavior when the user long presses the home button.
             0 - Nothing
