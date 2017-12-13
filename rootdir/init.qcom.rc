@@ -194,6 +194,14 @@ on boot
     setprop persist.sys.fp.vendor none
     start gx_fpd
 
+    # jacoghi, Double Tap to Wake nodes for EBBG LCD
+
+  on property:markw.dt2w=1
+    write /sys/devices/soc/78b7000.i2c/i2c-3/3-004a/wakeup_mode 1
+
+  on property:markw.dt2w=0
+    write /sys/devices/soc/78b7000.i2c/i2c-3/3-004a/wakeup_mode 0
+
     # Allow access to emmc rawdump block partition and dload sysfs node
     chown root system /dev/block/bootdevice/by-name/rawdump -p /dev/block/
     chmod 0660 /dev/block/bootdevice/by-name/rawdump -p /dev/block/
