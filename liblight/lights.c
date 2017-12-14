@@ -304,16 +304,6 @@ set_speaker_light_locked(struct light_device_t* dev,
     else
         alpha = (colorRGB >> 24) & 0xFF;
 
-    if (0 == strcmp(LIGHT_ID_BATTERY, light_id)) // disable alpha from led when battery is charging
-        alpha = 0xFF;
-    else
-        alpha = (colorRGB >> 24) & 0xFF;
-
-    if (0 == strcmp(LIGHT_ID_BATTERY, light_id)) // disable alpha from led when battery is charging
-        alpha = 0xFF;
-    else
-        alpha = (colorRGB >> 24) & 0xFF;
-
     red = (colorRGB >> 16) & 0xFF;
     green = (colorRGB >> 8) & 0xFF;
     blue = colorRGB & 0xFF;

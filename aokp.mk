@@ -24,10 +24,6 @@ $(call inherit-product, device/xiaomi/markw/device.mk)
 # Inherit some common CM stuff.
 $(call inherit-product, vendor/aokp/configs/common_full_phone.mk)
 
-# RR Device Maintainers
-PRODUCT_BUILD_PROP_OVERRIDES += \
-    DEVICE_MAINTAINERS="VaBe"
-
 # Device identifier. This must come after all inclusions.
 PRODUCT_NAME := aokp_markw
 PRODUCT_DEVICE := markw

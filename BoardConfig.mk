@@ -169,12 +169,13 @@ TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
 TARGET_ANDROID_FILESYSTEM_CONFIG_H := $(LOCAL_PATH)/android_filesystem_config.h
 
+# FM
+BOARD_HAVE_QCOM_FM := true
+TARGET_QCOM_NO_FM_FIRMWARE := true
+
 # GPS
 USE_DEVICE_SPECIFIC_GPS := true
 TARGET_NO_RPC := true
-
-#HWUI
-HWUI_COMPILE_FOR_PERF := true
 
 # Init
 TARGET_INIT_VENDOR_LIB := libinit_markw
@@ -206,13 +207,7 @@ TARGET_PER_MGR_ENABLED := true
 # Power
 TARGET_POWERHAL_VARIANT := qcom
 
-# Enable real time lockscreen charging current values
-BOARD_GLOBAL_CFLAGS += -DBATTERY_REAL_INFO
-
-# Properties
-TARGET_SYSTEM_PROP := $(LOCAL_PATH)/system.prop
-
-# Qualcomm
+# QCOM
 BOARD_USES_QCOM_HARDWARE := true
 BOARD_USES_QC_TIME_SERVICES := true
 TARGET_USE_SDCLANG := true
@@ -221,8 +216,8 @@ TARGET_USE_SDCLANG := true
 BOARD_HAS_LARGE_FILESYSTEM := true
 TARGET_RECOVERY_FSTAB := $((LOCAL_PATH)/rootdir/fstab.qcom
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
-#TARGET_RECOVERY_UI_LIB := librecovery_ui_msm
-#TARGET_RECOVERY_UPDATER_LIBS := librecovery_updater_msm
+TARGET_RECOVERY_UI_LIB := librecovery_ui_msm
+TARGET_RECOVERY_UPDATER_LIBS := librecovery_updater_msm
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
 
@@ -240,7 +235,7 @@ USE_SENSOR_MULTI_HAL := true
 TARGET_TAP_TO_WAKE_NODE := "/proc/gesture/onoff"
 
 # SELinux
--include device/qcom/sepolicy/sepolicy.mk
+include device/qcom/sepolicy/sepolicy.mk
 BOARD_SEPOLICY_DIRS += $(LOCAL_PATH)/sepolicy
 
 # Wi-Fi

@@ -122,7 +122,6 @@ PRODUCT_COPY_FILES += \
 
 # Camera
 PRODUCT_PACKAGES += \
-    Snap \
     SnapdragonCamera
 #    camera.msm8953 \
 #    libmm-qcamera \
@@ -145,8 +144,8 @@ PRODUCT_PACKAGES += \
     libtinyxml
 
 # Doze mode
-PRODUCT_PACKAGES += \
-    XiaomiDoze
+#PRODUCT_PACKAGES += \
+#    XiaomiDoze
 
 # Display Livedisplay
 PRODUCT_PACKAGES += \

@@ -290,12 +290,12 @@ case "$target" in
 
                 for freq in /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq
                 do
-                  echo 2016000 > $freq
+                  echo 2208000 > $freq
                 done
 
                 for freq in /sys/devices/system/cpu/cpu*/cpufreq/scaling_min_freq
                 do
-                  echo 652800 > $freq
+                  echo 307000 > $freq
                 done
 
                 #governor settings

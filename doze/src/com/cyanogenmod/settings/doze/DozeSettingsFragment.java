@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015 The CyanogenMod Project
+ *               2017 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +17,6 @@
 
 package com.cyanogenmod.settings.doze;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -32,7 +32,6 @@ import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.Preference.OnPreferenceChangeListener;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
@@ -42,9 +41,7 @@ import android.widget.TextView;
 public class DozeSettingsFragment extends PreferenceFragment implements OnPreferenceChangeListener,
         CompoundButton.OnCheckedChangeListener {
 
-    TextView mTextView;
-
-    private Switch mSwitch;
+    private TextView mTextView;
 
     private SwitchPreference mPickUpPreference;
     private SwitchPreference mHandwavePreference;
@@ -53,27 +50,22 @@ public class DozeSettingsFragment extends PreferenceFragment implements OnPrefer
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.doze_settings);
-        final ActionBar actionBar = getActivity().getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
 
         SharedPreferences prefs = getActivity().getSharedPreferences("doze_settings",
                 Activity.MODE_PRIVATE);
         if (savedInstanceState == null && !prefs.getBoolean("first_help_shown", false)) {
+            showHelp();
         }
 
         boolean dozeEnabled = Utils.isDozeEnabled(getActivity());
 
-        mPickUpPreference =
-                (SwitchPreference) findPreference(Utils.GESTURE_PICK_UP_KEY);
+        mPickUpPreference = (SwitchPreference) findPreference(Utils.GESTURE_PICK_UP_KEY);
         mPickUpPreference.setEnabled(dozeEnabled);
 
-        mHandwavePreference =
-                (SwitchPreference) findPreference(Utils.GESTURE_HAND_WAVE_KEY);
+        mHandwavePreference = (SwitchPreference) findPreference(Utils.GESTURE_HAND_WAVE_KEY);
         mHandwavePreference.setEnabled(dozeEnabled);
 
-        mPocketPreference =
-                (SwitchPreference) findPreference(Utils.GESTURE_POCKET_KEY);
+        mPocketPreference = (SwitchPreference) findPreference(Utils.GESTURE_POCKET_KEY);
         mPocketPreference.setEnabled(dozeEnabled);
     }
 
@@ -96,18 +88,17 @@ public class DozeSettingsFragment extends PreferenceFragment implements OnPrefer
                 R.string.switch_bar_on : R.string.switch_bar_off));
 
         View switchBar = view.findViewById(R.id.switch_bar);
-        mSwitch = (Switch) switchBar.findViewById(android.R.id.switch_widget);
-        mSwitch.setChecked(dozeEnabled);
-        mSwitch.setOnCheckedChangeListener(this);
+        Switch switchWidget = (Switch) switchBar.findViewById(android.R.id.switch_widget);
+        switchWidget.setChecked(dozeEnabled);
+        switchWidget.setOnCheckedChangeListener(this);
 
         switchBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSwitch.setChecked(!mSwitch.isChecked());
+                switchWidget.setChecked(!switchWidget.isChecked());
             }
         });
     }
-
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -127,15 +118,6 @@ public class DozeSettingsFragment extends PreferenceFragment implements OnPrefer
         mPocketPreference.setEnabled(b);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            getActivity().onBackPressed();
-            return true;
-        }
-        return false;
-    }
- 
     private static class HelpDialogFragment extends DialogFragment {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
