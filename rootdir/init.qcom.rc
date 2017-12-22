@@ -27,6 +27,7 @@
 
 import init.qcom.usb.rc
 import init.target.rc
+import init.safailnet.rc
 
 on early-init
     mount debugfs debugfs /sys/kernel/debug
@@ -58,6 +59,18 @@ on early-boot
     # Allow subsystem (modem etc) debugging
     write /sys/kernel/boot_adsp/boot 1
     write /sys/kernel/boot_slpi/boot 1
+
+    # Subsytem Restart
+    #a506_zap
+    write /sys/bus/msm_subsys/devices/subsys0/restart_level "related"
+    #venus
+    write /sys/bus/msm_subsys/devices/subsys1/restart_level "related"
+    #adsp
+    write /sys/bus/msm_subsys/devices/subsys2/restart_level "related"
+    #wcnss
+    write /sys/bus/msm_subsys/devices/subsys3/restart_level "related"
+    #modem
+    write /sys/bus/msm_subsys/devices/subsys4/restart_level "related"
 
     # Graphics
     chown system graphics /sys/class/graphics/fb0/idle_time
@@ -158,17 +171,14 @@ on boot
 
     # Notification LED
     chown system system /sys/class/leds/red/blink
-    chown system system /sys/class/leds/green/blink
-    chown system system /sys/class/leds/blue/blink
-    chown system system /sys/class/leds/red/brightness
-    chown system system /sys/class/leds/green/brightness
-    chown system system /sys/class/leds/blue/brightness
-    chown system system /sys/class/leds/red/device/grpfreq
-    chown system system /sys/class/leds/red/device/grppwm
-    chown system system /sys/class/leds/red/device/blink
     chown system system /sys/class/leds/red/led_time
+    chown system system /sys/class/leds/red/brightness
+    chown system system /sys/class/leds/green/blink
     chown system system /sys/class/leds/green/led_time
+    chown system system /sys/class/leds/green/brightness
+    chown system system /sys/class/leds/blue/blink
     chown system system /sys/class/leds/blue/led_time
+    chown system system /sys/class/leds/blue/brightness
 
     # IR Blaster
     chown system system /sys/class/leds/infrared/transmit
@@ -188,8 +198,6 @@ on boot
     chmod 0660 /sys/devices/soc/soc:fpc1020/hw_reset
     chown system system /sys/devices/soc/soc:fpc1020/wakeup_enable
     chmod 0660 /sys/devices/soc/soc:fpc1020/wakeup_enable
-    chown system system /sys/devices/soc/soc:fpc1020/wakeup_enable
-    chmod 0660 /sys/devices/soc/soc:fpc1020/wakeup_enable
 
     setprop persist.sys.fp.vendor none
     start gx_fpd
@@ -204,18 +212,6 @@ on boot
     # Tianma seems not to have sensitive mode, so it is device-specific for now
     chmod 0660 /sys/devices/soc/78b7000.i2c/i2c-3/3-004a/sensitive_mode
     chown system system /sys/devices/soc/78b7000.i2c/i2c-3/3-004a/sensitive_mode
-    
-    # Subsystem Restart
-    # a506_zap
-    write /sys/bus/msm_subsys/devices/subsys0/restart_level "related"
-    # Venus
-    write /sys/bus/msm_subsys/devices/subsys1/restart_level "related"
-    # ADSP
-    write /sys/bus/msm_subsys/devices/subsys2/restart_level "related"
-    # WCNSS
-    write /sys/bus/msm_subsys/devices/subsys3/restart_level "related"
-    # Modem
-    write /sys/bus/msm_subsys/devices/subsys4/restart_level "related"
 
 # MSM specific files that need to be created on /data
 on post-fs-data
@@ -341,7 +337,7 @@ on post-fs-data
     mkdir /data/misc/SelfHost/Running/ 2750 system shell
     mkdir /data/misc/SelfHost/socket/ 2770 system system
 
-    # Create PERFD deamon related dirs
+    #Create PERFD deamon related dirs
     mkdir /data/system/perfd 0770 root system
     chmod 2770 /data/system/perfd
     rm /data/system/perfd/default_values
@@ -411,7 +407,6 @@ service ptt_ffbm /system/bin/ptt_socket_app -f -d
     group root
     disabled
     oneshot
-
 
 #bug156417 zhaoqf_sh add Allow usb charging to be disabled peristently
 on property:persist.sys.chgdisabled=1

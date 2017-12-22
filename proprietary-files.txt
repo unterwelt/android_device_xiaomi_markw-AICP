@@ -519,3 +519,9 @@ lib64/libfpservice.so
 
 # FM
 bin/fm_qsoc_patches
+
+# Thermal (7.11.23)
+vendor/bin/thermal-engine
+vendor/lib/libthermalclient.so
+vendor/lib64/libthermalclient.so
+vendor/lib64/libthermalioctl.so

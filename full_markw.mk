@@ -1,4 +1,5 @@
-# Copyright (C) 2016 The CyanogenMod Project
+#
+# Copyright (C) 2017 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,18 +12,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
-LOCAL_PATH:= $(call my-dir)
+# Inherit from those products. Most specific first.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 
-include $(CLEAR_VARS)
+# Inherit from markw device
+$(call inherit-product, device/xiaomi/markw/device.mk)
 
-LOCAL_MODULE := lights.$(TARGET_BOARD_PLATFORM)
-
-LOCAL_MODULE_RELATIVE_PATH := hw
-
-LOCAL_MODULE_TAGS := optional
-
-LOCAL_SRC_FILES := lights.c
-LOCAL_SHARED_LIBRARIES := liblog libcutils
-
-include $(BUILD_SHARED_LIBRARY)
+# Device identifier. This must come after all inclusions
+TARGET_VENDOR := Xiaomi
+PRODUCT_DEVICE := markw
+PRODUCT_NAME := full_markw
+PRODUCT_BRAND := Xiaomi
+PRODUCT_MODEL := Redmi 4 Prime
+PRODUCT_MANUFACTURER := Xiaomi

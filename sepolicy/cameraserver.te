@@ -1,0 +1,1 @@
+allow cameraserver media_settings_xml_prop:file { getattr read open };

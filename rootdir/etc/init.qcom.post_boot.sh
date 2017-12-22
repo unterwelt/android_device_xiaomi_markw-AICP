@@ -288,21 +288,44 @@ case "$target" in
                     echo -n enable > $mode
                 done
 
-                #governor settings
-                echo 1 > /sys/devices/system/cpu/cpu0/online
+                # Boeffla generic wakelock blocker
+                echo "IPA_WS;wlan_extscan_wl;qcom_rx_wakelock;wlan;[timerfd];alarmtimer;bq_delt_soc_wake_lock;NETLINK;wlan_wd_wake;wlan_rx_wake;wlan_ctrl_wake;wlan_wake;bluedroid_timer;bluesleep" > /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker
+
+                # Switch TCP congestion control to westwood
+                echo westwood > /proc/sys/net/ipv4/tcp_congestion_control
+
+                # Governor settings
+                #echo 1 > /sys/devices/system/cpu/cpu0/online
+                #echo "interactive" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+                #echo "20000 1036800:40000" > /sys/devices/system/cpu/cpufreq/interactive/above_hispeed_delay
+                #echo 95 > /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load
+                #echo 1209600 > /sys/devices/system/cpu/cpufreq/interactive/hispeed_freq
+                #echo 0 > /sys/devices/system/cpu/cpufreq/interactive/io_is_busy
+                #echo 40000 > /sys/devices/system/cpu/cpufreq/interactive/min_sample_time
+                #echo 652800 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+                #echo 652800 > /sys/devices/system/cpu/cpufreq/interactive/screen_off_maxfreq
                 echo "impulse" > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-                echo "19000 1401600:29000" > /sys/devices/system/cpu/cpufreq/impulse/above_hispeed_delay
+                echo "20000 1036800:30000" > /sys/devices/system/cpu/cpufreq/impulse/above_hispeed_delay
                 echo 95 > /sys/devices/system/cpu/cpufreq/impulse/go_hispeed_load
                 echo 20000 > /sys/devices/system/cpu/cpufreq/impulse/timer_rate
-                echo 1401600 > /sys/devices/system/cpu/cpufreq/impulse/hispeed_freq
+                echo 1209600 > /sys/devices/system/cpu/cpufreq/impulse/hispeed_freq
                 echo 0 > /sys/devices/system/cpu/cpufreq/impulse/io_is_busy
-                echo "85 1401600:80" > /sys/devices/system/cpu/cpufreq/impulse/target_loads
-                echo 29000 > /sys/devices/system/cpu/cpufreq/impulse/min_sample_time
-                echo 10 > /sys/devices/system/cpu/cpufreq/impulse/go_lowspeed_load
-
+                echo 30000 > /sys/devices/system/cpu/cpufreq/impulse/min_sample_time
+                echo 652800 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+                echo 652800 > /sys/devices/system/cpu/cpufreq/impulse/screen_off_maxfreq
 
                 echo 1 > /sys/devices/system/cpu/cpufreq/impulse/use_sched_load
                 echo 1 > /sys/devices/system/cpu/cpufreq/impulse/use_migration_notif
+
+                ### CPU_Boost
+                echo 0 > /sys/module/cpu_boost/parameters/input_boost_enabled
+                echo "0:1036800 1:1036800 2:0 3:0 4:0 5:0 6:0 7:0" > /sys/module/cpu_boost/parameters/input_boost_freq
+                echo 0 > /sys/module/cpu_boost/parameters/boost_ms
+                echo 40 > /sys/module/cpu_boost/parameters/input_boost_ms
+                echo 15 > /sys/module/cpu_boost/parameters/migration_load_threshold
+                echo 0 > /sys/module/cpu_boost/parameters/sync_threshold
+                echo N > /sys/module/cpu_boost/parameters/load_based_syncs
+                echo N > /sys/module/cpu_boost/parameters/shed_boost_on_input
 
                 # re-enable thermal & BCL core_control now
                 echo 1 > /sys/module/msm_thermal/core_control/enabled
@@ -391,9 +414,3 @@ case "$console_config" in
         echo "Enable console config to $console_config"
         ;;
 esac
-
-# Switch TCP congestion control to CDG
-echo cdg > /proc/sys/net/ipv4/tcp_congestion_control
-
-# Disable fingerprint boost - CPU is fast enough by itself.
-echo 0 > /sys/kernel/fp_boost/enabled
