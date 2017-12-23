@@ -33,6 +33,6 @@ PRODUCT_BUILD_PROP_OVERRIDES += \
     PRIVATE_BUILD_DESC="markw-user 6.0.1 MMB29M V8.5.3.0.MBEMIED release-keys"
 
 
-# LineageOS Maintainers
+# RR Device Maintainers
 PRODUCT_BUILD_PROP_OVERRIDES += \
-         DEVICE_MAINTAINERS="SonicBSV (Sergey B.)"
+    DEVICE_MAINTAINERS="VaBe"
