@@ -290,9 +290,17 @@ case "$target" in
 
                 # Boeffla generic wakelock blocker
                 echo "IPA_WS;wlan_extscan_wl;qcom_rx_wakelock;wlan;[timerfd];alarmtimer;bq_delt_soc_wake_lock;NETLINK;wlan_wd_wake;wlan_rx_wake;wlan_ctrl_wake;wlan_wake;bluedroid_timer;bluesleep" > /sys/class/misc/boeffla_wakelock_blocker/wakelock_blocker
+                for freq in /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq
+                do
+                  echo 2208000 > $freq
+                done
 
                 # Switch TCP congestion control to westwood
                 echo westwood > /proc/sys/net/ipv4/tcp_congestion_control
+                for freq in /sys/devices/system/cpu/cpu*/cpufreq/scaling_min_freq
+                do
+                  echo 307000 > $freq
+                done
 
                 # Governor settings
                 #echo 1 > /sys/devices/system/cpu/cpu0/online
